@@ -1,0 +1,28 @@
+﻿# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv/
+venv/
+.env.local
+
+# Node/Web
+node_modules/
+dist/
+*.log
+
+# Media/Models
+backend/ru_RU-dmitri-medium.onnx
+backend/media/**
+SadTalker/**/models/**
+SadTalker/**/data/**
+*.onnx
+*.ckpt
+*.pt
+*.wav
+*.mp4
+
+# VSCode
+.vscode/

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Receptionist — Admin</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Virtual Receptionist — Admin (Lang + SadTalker + Piper)</h1>
+
+    <section>
+      <h2>Промпт консультанта</h2>
+      <p>Этот текст добавляется к системным инструкциям ассистента. Можно менять без изменения кода.</p>
+      <textarea id="extra_prompt" rows="10" placeholder="[ЗДЕСЬ БУДЕТ ВСТАВЛЕН ПРОМПТ ИИ-КОНСУЛЬТАНТА ЗАКАЗЧИКОМ]"></textarea>
+    </section>
+
+    <section>
+      <h2>Основные настройки</h2>
+      <label>
+        Язык ассистента (STT + ответы):
+        <select id="language">
+          <option value="kk">Казахский</option>
+          <option value="ru">Русский</option>
+          <option value="en">Английский</option>
+        </select>
+      </label>
+
+      <!-- Промпт перенесён в отдельный раздел выше -->
+
+      <label>
+        Режим аватара:
+        <select id="avatar_mode">
+          <option value="video">Видео (SadTalker)</option>
+          <option value="static">Только статичный образ</option>
+          <option value="none">Без аватара</option>
+        </select>
+      </label>
+
+      <label>
+        Путь к файлу аватара (LOCAL путь для SadTalker source_image):
+        <input id="avatar_image_path" type="text" placeholder="C:\\Users\\...\\avatar.jpg" />
+      </label>
+    </section>
+
+    <section>
+      <h2>Детекция присутствия</h2>
+      <label>
+        Чувствительность (0–1):
+        <input id="presence_sensitivity" type="number" min="0" max="1" step="0.05" />
+      </label>
+      <div style="display:flex; gap:12px; flex-wrap:wrap">
+        <label>ROI top (%): <input id="roi_top" type="number" min="0" max="100" step="1"></label>
+        <label>ROI left (%): <input id="roi_left" type="number" min="0" max="100" step="1"></label>
+        <label>ROI width (%): <input id="roi_width" type="number" min="1" max="100" step="1"></label>
+        <label>ROI height (%): <input id="roi_height" type="number" min="1" max="100" step="1"></label>
+      </div>
+      <label>
+        Допуск внимания (px):
+        <input id="attention_tolerance" type="number" min="20" max="200" step="5" />
+      </label>
+    </section>
+
+    <section>
+      <button id="saveBtn">Сохранить</button>
+      <span id="status"></span>
+    </section>
+
+    <section>
+      <h2>Субтитры</h2>
+      <label>
+        Включить субтитры:
+        <input id="subtitles_enabled" type="checkbox" />
+      </label>
+      <p style="opacity:0.7">Если выключено — ответы озвучиваются, текст не показывается.</p>
+    </section>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

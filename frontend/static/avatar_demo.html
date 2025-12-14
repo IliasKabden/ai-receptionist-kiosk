@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avatar Demo</title>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    #container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    h1 {
+      margin-bottom: 10px;
+    }
+    
+    #avatar-container {
+      width: 600px;
+      height: 600px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      margin: 20px 0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .controls {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 20px;
+      border-radius: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      max-width: 600px;
+    }
+    
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    
+    button:hover {
+      background: #45a049;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .emotion-btn { background: #2196F3; }
+    .emotion-btn:hover { background: #0b7dda; }
+    
+    .gesture-btn { background: #FF9800; }
+    .gesture-btn:hover { background: #e68900; }
+    
+    .test-btn { background: #9C27B0; }
+    .test-btn:hover { background: #7b1fa2; }
+    
+    #info {
+      margin-top: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 5px;
+      max-width: 600px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>🎭 3D Avatar Demo</h1>
+    <p>Test the real-time avatar with emotions, gestures, and lip-sync</p>
+    
+    <div id="avatar-container"></div>
+    
+    <div class="controls">
+      <h3 style="width: 100%; text-align: center; margin: 0 0 10px 0;">Emotions</h3>
+      <button class="emotion-btn" onclick="setEmotion('neutral')">😐 Neutral</button>
+      <button class="emotion-btn" onclick="setEmotion('happy')">😊 Happy</button>
+      <button class="emotion-btn" onclick="setEmotion('sad')">😢 Sad</button>
+      <button class="emotion-btn" onclick="setEmotion('surprised')">😮 Surprised</button>
+      <button class="emotion-btn" onclick="setEmotion('thinking')">🤔 Thinking</button>
+      
+      <h3 style="width: 100%; text-align: center; margin: 10px 0;">Gestures</h3>
+      <button class="gesture-btn" onclick="playGesture('wave')">👋 Wave</button>
+      <button class="gesture-btn" onclick="playGesture('point')">👉 Point</button>
+      
+      <h3 style="width: 100%; text-align: center; margin: 10px 0;">Test</h3>
+      <button class="test-btn" onclick="testLipsync()">🎤 Test Lip-sync (with audio)</button>
+    </div>
+    
+    <div id="info">
+      <strong>Current Status:</strong> <span id="status">Ready</span><br>
+      <small>This is a placeholder avatar. Load a VRM model for full features.</small>
+    </div>
+  </div>
+
+  <script type="module">
+    import { AvatarController } from './avatar.js';
+    
+    let avatarController;
+    
+    async function init() {
+      const container = document.getElementById('avatar-container');
+      
+      try {
+        avatarController = new AvatarController(container);
+        window.avatarController = avatarController; // Make global for buttons
+        document.getElementById('status').textContent = '✅ Avatar initialized';
+        console.log('Avatar initialized successfully');
+      } catch (error) {
+        console.error('Failed to initialize avatar:', error);
+        document.getElementById('status').textContent = '❌ Initialization failed: ' + error.message;
+      }
+    }
+    
+    window.setEmotion = (emotion) => {
+      if (window.avatarController) {
+        window.avatarController.setEmotion(emotion);
+        document.getElementById('status').textContent = `Emotion: ${emotion}`;
+      }
+    };
+    
+    window.playGesture = (gesture) => {
+      if (window.avatarController) {
+        window.avatarController.playGesture(gesture);
+        document.getElementById('status').textContent = `Playing gesture: ${gesture}`;
+      }
+    };
+    
+    window.testLipsync = async () => {
+      if (!window.avatarController) return;
+      
+      document.getElementById('status').textContent = 'Generating test audio...';
+      
+      // Create test audio with oscillating frequency (simulates speech)
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const duration = 3; // 3 seconds
+      const sampleRate = audioContext.sampleRate;
+      const buffer = audioContext.createBuffer(1, duration * sampleRate, sampleRate);
+      const data = buffer.getChannelData(0);
+      
+      // Generate speech-like audio (varying frequency and amplitude)
+      for (let i = 0; i < data.length; i++) {
+        const t = i / sampleRate;
+        const freq = 200 + Math.sin(t * 5) * 100; // Varying frequency
+        const amplitude = 0.3 * (1 + Math.sin(t * 3)) / 2; // Varying amplitude
+        data[i] = amplitude * Math.sin(2 * Math.PI * freq * t);
+      }
+      
+      const source = audioContext.createBufferSource();
+      source.buffer = buffer;
+      
+      // Connect to avatar analyser
+      if (avatarController.analyser) {
+        source.connect(avatarController.analyser);
+        avatarController.analyser.connect(audioContext.destination);
+        avatarController.isPlaying = true;
+        
+        source.onended = () => {
+          avatarController.isPlaying = false;
+          document.getElementById('status').textContent = 'Lip-sync test completed';
+        };
+      } else {
+        source.connect(audioContext.destination);
+      }
+      
+      source.start();
+      document.getElementById('status').textContent = '🎤 Playing test audio with lip-sync';
+      
+      // Cycle through emotions during test
+      setTimeout(() => setEmotion('happy'), 500);
+      setTimeout(() => setEmotion('surprised'), 1500);
+      setTimeout(() => setEmotion('thinking'), 2500);
+    };
+    
+    // Initialize on load
+    init();
+  </script>
+</body>
+</html>

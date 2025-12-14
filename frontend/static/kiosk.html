@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Receptionist — Kiosk</title>
+  <link rel="stylesheet" href="style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <!-- MediaPipe Face Mesh for presence detection -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    <head>
+<body class="kiosk-body">
+  <div class="kiosk-container">
+    <div class="avatar-wrapper" id="avatarWrapper">
+      <!-- Material Icons (ligature font) for recording indicator -->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+      <!-- Two video layers for smooth crossfade -->
+      <video id="waitingVideo" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; z-index: 10; opacity: 1; transition: opacity 0.8s ease-in-out;">
+        <!-- Local file-friendly path (copied by kiosk script) -->
+        <source src="media/videos/waiting_loop.mp4" type="video/mp4">
+      </video>
+      
+      <video id="speakingVideo" playsinline style="width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; z-index: 11; opacity: 0; transition: opacity 0.8s ease-in-out;">
+        <!-- Local file-friendly path (copied by kiosk script) -->
+        <source src="media/videos/speaking_response.mp4" type="video/mp4">
+      </video>
+
+      <!-- Subtitles overlay -->
+      <div id="subtitles" class="subtitles"></div>
+
+      <!-- UI overlay: status + hint -->
+      <div class="ui-overlay">
+        <div class="status-chip" id="statusIndicator">
+          <span class="status-dot" id="statusDot"></span>
+          <span class="status-label" id="statusLabel">Готов</span>
+        </div>
+        <div class="hint-chip" id="hintChip">Скажите: "Где находится бухгалтерия?"</div>
+      </div>
+
+      <!-- Recording badge removed -->
+
+      <!-- Google-like mic indicator (center, no background) -->
+      <div class="mic-indicator" id="micIndicator" aria-label="Speaking indicator" aria-hidden="true">
+        <!-- Pulsing rings -->
+        <div class="mic-ring mic-ring--1"></div>
+        <div class="mic-ring mic-ring--2"></div>
+        
+        <!-- Center mic icon -->
+        <svg class="mic-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Z" fill="rgba(239,68,68,0.85)" />
+          <path d="M5 11a7 7 0 0 0 14 0" stroke="rgba(239,68,68,0.85)" stroke-width="1.6" stroke-linecap="round" />
+          <path d="M12 18v3" stroke="rgba(239,68,68,0.85)" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+      </div>
+
+      <!-- Панель результата маршрута -->
+      <div id="routePanel" class="route-panel" style="display:none; position:absolute; right:12px; top:12px; z-index: 20; background: rgba(0,0,0,0.6); color:#fff; padding:12px 14px; border-radius:8px; box-shadow: 0 2px 8px rgba(0,0,0,0.25)">
+        <div class="route-title" style="font-weight:600; margin-bottom:6px">Куда пройти</div>
+        <div class="route-body">
+          <div id="routeDept"></div>
+          <div id="routeRoom"></div>
+          <div id="routeFloor"></div>
+          <div id="routeContact"></div>
+        </div>
+        <div class="route-arrow" style="margin-top:8px; font-size:20px">➡️</div>
+      </div>
+
+      <div style="display: none;" class="audio-controls">
+        <button id="muteBtn" class="icon-btn" aria-label="mute">🔇</button>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="1" />
+      </div>
+
+      <!-- Onboarding card -->
+      <div class="onboard-card" id="onboardCard">
+        <div class="onboard-title">Быстрый старт</div>
+        <ul class="onboard-list">
+          <li>Подойдите ближе и смотрите в камеру</li>
+          <li>Скажите запрос чётко, без пауз</li>
+          <li>Если нет звука — нажмите повтор</li>
+        </ul>
+        <button class="onboard-dismiss" id="onboardDismiss">Понятно</button>
+      </div>
+
+    </div>
+  </div>
+
+  <audio id="replyAudio"></audio>
+
+  <!-- Toast stack -->
+  <div id="toastStack" class="toast-stack"></div>
+
+  <script src="kiosk.js"></script>
+</body>
+</html>

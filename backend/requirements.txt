@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic
+openai>=1.0.0
+python-multipart
+av
+webrtcvad
+piper-tts
+numpy
+noisereduce
+soundfile
+TTS
+requests>=2.28.0
