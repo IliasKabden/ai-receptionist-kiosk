@@ -11,7 +11,8 @@ AI Receptionist — 3D Real-time Avatar + Streaming Pipeline + Multi-language
 
 **👉 See [AVATAR_QUICKSTART.md](AVATAR_QUICKSTART.md) for avatar setup!**
 
----
+---<img width="1901" height="903" alt="11d3bd14-56a5-4f43-9744-c3be8b0a7bb1" src="https://github.com/user-attachments/assets/e03cdfd0-c884-456a-875c-fc60a44e9ba8" />
+
 
 В этой версии:
 - Выбор языка в админке (kk / ru / en) напрямую управляет:
